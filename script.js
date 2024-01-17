@@ -1,87 +1,60 @@
-function getComputerChoice () {
-    // 生成一个介于0至2的随机整数
-    const randomNum = Math.floor(Math.random() * 3)
+//计分
+let playerWins = 0;
+let computerWins = 0;
 
-    switch (randomNum) {
-        case 0:
-            return "Rock";
-        case 1:
-            return "Paper";
-        case 2:
-            return "Scissors"
-    }
+//电脑选择
+function getComputerChoice() {
+    const choices = ["石头", "剪刀", "布"];
+      const randomIndex = Math.floor(Math.random() * 3);
+      return choices[randomIndex];
 }
 
-const computerSelection = getComputerChoice();
-console.log("计算机选择了：" + computerSelection);
-
-function gameResult(playerSelection, computerSelection) {
-    //平局
-    if (playerSelection == computerSelection) {
-        return "It's a tie!";
-    }
-    //玩家获胜
-    else if (
-        (playerSelection=="Rock" && computerSelection=="Scissors") ||
-        (playerSelection=="Paper" && computerSelection=="Rock") ||
-        (playerSelection=="Scissors" && computerSelection=="Paper")
+function determineWinner(playerChoice, computerChoice) {
+    if (playerChoice === computerChoice) {
+      return "平局！";
+    } else if (
+      (playerChoice === "石头" && computerChoice === "剪刀") ||
+      (playerChoice === "剪刀" && computerChoice === "布") ||
+      (playerChoice === "布" && computerChoice === "石头")
     ) {
-        return `You Win! ${playerSelection} beats ${computerSelection}`;
-    }
-    //电脑获胜
-    else {
-        return `You Lose! ${computerSelection} beats ${playerSelection}`;
-    }
-
-}
-
-// 示例用法
-// const playerSelection = "Rock"; 
-// const result = gameResult(playerSelection, computerSelection);
-// console.log(result)
-
-function game() {
-    let playerScore = 0;
-    let computerScore = 0;
-    const rounsToWin = 3;
-
-    // 游戏开始！！！
-    for (let i = 1; i <= 5; i++) {
-        console.log(`Round ${i}:`);
-
-        const playerSelection = prompt("Please enter your choice:")
-        const computerSelection = getComputerChoice()
-
-        console.log(`Computer chose: ${computerSelection}`);
-
-        const result = gameResult(playerSelection, playerSelection)
-        console.log(result);
-
-    // 根据结果更新分数
-    if (result.includes("Win")) {
-        playerScore++;
-      } else if (result.includes("Lose")) {
-        computerScore++;
-      }
-  
-      console.log(`Score - Player: ${playerScore}, Computer: ${computerScore}\n`);
-
-    // 判断是否有一方达到三次胜利
-    if (playerScore === roundsToWin || computerScore === roundsToWin) {
-        break;
-      }
-
-    }
-    
-    // 判断最终胜者
-    if (playerScore > computerScore) {
-        onsole.log("Congratulations! You win the game!");
-     } else if (playerScore < computerScore) {
-        console.log("Sorry! You lose the game.");
+      return "你赢了！";
     } else {
-        console.log("It's a tie. No clear winner.");
+      return "电脑赢了！";
+    }
   }
 
-}
 
-game()
+function playRound(playerChoice) {
+    const computerChoice = getComputerChoice();
+
+    const result = determineWinner(playerChoice, computerChoice);
+
+    document.getElementById('result').innerText = result;
+
+    if (result.includes("你赢了")) {
+      playerWins++;
+    } else if (result.includes("电脑赢了")) {
+      computerWins++;
+    }
+
+    document.getElementById('score').innerText = `当前比分： 你 ${playerWins} - ${computerWins} 电脑`;
+
+    if (playerWins === 5 || computerWins === 5) {
+      if (playerWins > computerWins) {
+        document.getElementById('result').innerText = "你赢得了比赛！";
+      } else {
+        document.getElementById('result').innerText = "电脑赢得了比赛！";
+      }
+
+      // 禁用按钮，比赛结束
+      document.getElementById('rock').disabled = true;
+      document.getElementById('paper').disabled = true;
+      document.getElementById('scissors').disabled = true;
+    }
+  }
+
+
+ // 添加事件监听器
+ document.getElementById('rock').addEventListener('click', () => playRound('石头'));
+ document.getElementById('paper').addEventListener('click', () => playRound('布'));
+ document.getElementById('scissors').addEventListener('click', () => playRound('剪刀'));
